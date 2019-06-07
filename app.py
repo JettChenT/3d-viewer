@@ -6,26 +6,33 @@ SCREEN_W,SCREEN_H  = 1400,640
 def RT_get_drawy(z):
     return SCREEN_H-(z-ORIGIN_ALTITUDE)*SCALE
 
-# data read
-datafile = open('Qomolangma.asc','r')
-strList = datafile.readlines()
-datafile.close()
 # pygame init
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_W,SCREEN_H))
 pygame.display.set_caption('3d viewer')
 screen.fill((0,0,225))
-# draw North
-maxList, minList = [0]*DATA_X_MAX,[SCREEN_H]*DATA_X_MAX 
+# data read
+datafile = open('Qomolangma.asc','r')
+strList = datafile.readlines()
+datafile.close()
+maxList,minList = [0]*DATA_X_MAX,[SCREEN_H]*DATA_X_MAX
 dataList = []
-
+n = 0
 for dataStr in strList:
-    dataStr =  dataStr.strip('\n')
+    dataStr = dataStr.strip('\n')
     line = []
     for s in dataStr.split(' '):
         line.append(eval(s))
     dataList.append(line)
-    x0,z0=0,RT_get_drawy(line[DATA_X_MAX-1])
+    n+= 1
+    pygame.draw.rect(screen,(0,225,0),(0,250,800,100),2)
+    pygame.draw.rect(screen,(0,225,0),(0,250,int(n/DATA_X_MAX*800),100),0)
+    # pygame.display.update()
+screen.fill((0,0,155))
+
+# draw North
+for y in range(DATA_Y_MAX):
+    x0,z0=0,RT_get_drawy(dataList[y][0])
     for x in range(DATA_X_MAX):
         z = RT_get_drawy(line[DATA_X_MAX-1-x])
         flag = 0
@@ -41,6 +48,7 @@ for dataStr in strList:
             pygame.quit()
             sys.exit()
     pygame.display.update()
+
 
 while True:
     for event in pygame.event.get():
